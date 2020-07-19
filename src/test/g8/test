@@ -1,0 +1,4 @@
+# check if the file gets created
+> server/stage
+$ exists server/target/universal/stage/conf/application.conf
+$ exists server/target/universal/stage/conf/logback-prod.xml

@@ -1,0 +1,20 @@
+name: Run tests
+
+on:
+  [ pull_request ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run tests
+        uses: matankdr/github-docker-sbt@11.0.5-1.3.8-DOCKER-IVY-CREDS12
+        with:
+          command: sbt test
+        env:
+          GITHUB_USERNAME: dap-bot
+          GITHUB_PASSWORD: \${{ secrets.DAP_BOT_TOKEN }}
+          GITHUB_USER_EMAIL: dap-bot@pipl.com

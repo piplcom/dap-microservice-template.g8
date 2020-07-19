@@ -1,0 +1,30 @@
+name: Publish image
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login to gcloud registry
+        id: gcloud
+        uses: elgohr/gcloud-login-action@master
+        with:
+          account_key: \${{ secrets.GCLOUD_KEY }}
+
+      - name: Run tests and deploy
+        uses: matankdr/github-docker-sbt@11.0.5-1.3.8-DOCKER-IVY-CREDS12
+        with:
+          docker-login-username: \${{ steps.gcloud.outputs.username }}
+          docker-login-password: \${{ steps.gcloud.outputs.password }}
+          docker-registry: https://gcr.io
+          command: sbt githubRelease
+        env:
+          GITHUB_USERNAME: dap-bot
+          GITHUB_PASSWORD: \${{ secrets.DAP_BOT_TOKEN }}
+          GITHUB_USER_EMAIL: dap-bot@pipl.com

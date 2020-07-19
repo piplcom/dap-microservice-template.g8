@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <conversionRule conversionWord="traceID" converterClass="kamon.instrumentation.logback.tools.TraceIDConverter" />
+    <!--    <property name="PATTERN" value="[%date{ISO8601}][%-5level][%logger{36}][%X{akkaSource}] %msg%n"/>-->
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>\${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <define name="LOG_PATH" class="com.pipl.dap.utils.logging.TypesafeConfigPropertyDefiner">
+        <propertyName>common.log.path</propertyName>
+    </define>
+
+    <define name="LOG_NAME" class="com.pipl.dap.utils.logging.TypesafeConfigPropertyDefiner">
+        <propertyName>common.log.name</propertyName>
+    </define>
+
+    <define name="LOG_LEVEL" class="com.pipl.dap.utils.logging.TypesafeConfigPropertyDefiner">
+        <propertyName>common.log.level</propertyName>
+    </define>
+
+    <define name="SERVICE_NAME" class="com.pipl.dap.utils.logging.TypesafeConfigPropertyDefiner">
+        <propertyName>common.name</propertyName>
+    </define>
+
+    <property name="PATTERN" value="[%date{ISO8601}][%-5level][%traceID][%logger{36}][appName=\${SERVICE_NAME}] %msg%n"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>\${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STACK_DRIVER" class="com.google.cloud.logging.logback.LoggingAppender">
+        <encoder>
+            <pattern>\${PATTERN}</pattern>
+        </encoder>
+        <!-- Optional : filter logs at or above a level -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <log>\${LOG_NAME}.log</log> <!-- Optional : default java.log -->
+        <!--        <resourceType>gae_app</resourceType> &lt;!&ndash; Optional : default: auto-detected, fallback: global &ndash;&gt;-->
+        <enhancer>com.example.logging.logback.enhancers.ExampleEnhancer</enhancer> <!-- Optional -->
+        <flushLevel>INFO</flushLevel> <!-- Optional : default ERROR -->
+    </appender>
+
+    <root level="\${LOG_LEVEL}">
+<!--
+        <appender-ref ref="STACK_DRIVER" />
+-->
+        <appender-ref ref="STDOUT" />
+<!--        <appender-ref ref="FILE" />-->
+    </root>
+</configuration>
